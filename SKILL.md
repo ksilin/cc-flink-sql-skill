@@ -63,7 +63,7 @@ Load these on demand when the topic matches:
 
 Stop and consult dialect traps if you see yourself writing any of these:
 
-- DataStream / Table API (Java/Scala) — CC is SQL-only
+- DataStream API (Java/Scala) — not supported on CC. Table API (Java/Python) IS supported
 - `CREATE CATALOG ...` — catalog = CC environment, not creatable
 - `SET 'execution.checkpointing.*'` — CC-managed, not settable
 - `CREATE TABLE ... WITH ('connector' = 'kafka', ...)` — tables auto-map from topics

@@ -9,14 +9,14 @@ Single source of truth. Update here; per-project CLAUDE.md references this file.
 | 1 | `CREATE CATALOG ...` | Catalog = env, database = cluster; not creatable | HIGH | CC UDF project |
 | 2 | `SET 'execution.checkpointing.interval'` | CC manages checkpointing; not user-settable | HIGH | CC UDF project |
 | 3 | `CREATE TABLE ... WITH ('connector' = 'kafka', ...)` | Tables auto-mapped from Kafka topics; manual DDL limited | HIGH | CC Flink project |
-| 4 | `WITH cte AS (...) INSERT INTO ...` | `INSERT INTO ... WITH cte AS (...)` — CTE comes AFTER INSERT INTO | HIGH | CC Flink project |
-| 5 | `CREATE TEMPORARY VIEW v AS (...)` | Not supported — must use CTE (`WITH v AS (...)`) | MEDIUM | CC Flink project |
+| 4 | `WITH cte AS (...) INSERT INTO ...` | `INSERT INTO ... WITH cte AS (...)` — CTE comes AFTER INSERT INTO (empirical) | HIGH | CC Flink project |
+| 5 | `CREATE TEMPORARY VIEW v AS (...)` | `TEMPORARY` not supported — use persistent `CREATE VIEW` or CTE (`WITH v AS (...)`) | MEDIUM | CC Flink project |
 | 6 | `INSERT INTO ... VALUES` | Materializes; test use only, not production | LOW | CC UDF project |
-| 7 | Custom `event_time` column for rowtime | Use `$rowtime` system column; never qualify as `t.$rowtime` | HIGH | CC Flink project |
-| 8 | `$rowtime AS alias` in CTE | Silently strips time-attribute property — downstream watermark breaks | CRITICAL | CC Flink project |
+| 7 | `t.$rowtime` (qualified system column) | Custom event-time columns with explicit watermarks ARE supported. For auto-mapped tables, use `$rowtime`; never qualify as `t.$rowtime` | MEDIUM | CC Flink project |
+| 8 | `$rowtime AS alias` in CTE | Silently strips time-attribute property — downstream watermark breaks (empirical) | CRITICAL | CC Flink project |
 | 9 | `ALTER TABLE t ADD WATERMARK ...` | Uses `MODIFY` not `ADD` for watermarks | MEDIUM | CC Flink project |
-| 10 | `SOURCE_WATERMARK()` | Adaptive histogram, 95th percentile, requires 250+ events before emitting | MEDIUM | CC Flink project |
-| 11 | Multiple `OVER` windows in one query | Not supported | HIGH | CC Flink project |
+| 10 | `SOURCE_WATERMARK()` | Default watermark strategy on CC; emits every 200ms. No special event count threshold | LOW | CC docs |
+| 11 | Multiple `OVER` windows in one query | Supported only if all window specs are identical in streaming mode | MEDIUM | CC docs |
 | 12 | `MATCH_RECOGNIZE` with `PREV()`/`NEXT()` offsets | No physical offsets, flat columns only, no greedy quantifiers as last pattern | HIGH | CC Flink project |
 | 13 | `CAST('2024-01-01T00:00:00Z' AS TIMESTAMP)` | ISO-8601 fails — use `TO_TIMESTAMP(REPLACE(...))` | MEDIUM | CC Flink project |
 | 14 | `UNIX_TIMESTAMP(ts_column)` on TIMESTAMP | Only accepts STRING argument — cast first | MEDIUM | CC Flink project |
@@ -29,14 +29,14 @@ Single source of truth. Update here; per-project CLAUDE.md references this file.
 | 21 | `debezium-json` (OSS naming) | CC uses `json-debezium-registry` (format-first naming) | MEDIUM | CC Flink project |
 | 22 | Savepoints, `STOP WITH SAVEPOINT` | Not exposed on CC; statement deletion = state loss; use `prevent_destroy` in TF | CRITICAL | CC Flink project |
 | 23 | Savepoint-based statement upgrade | NOT available on CC — savepoints internal-only; cannot transfer state to different statement | CRITICAL | CC Flink project |
-| 24 | DataStream / Table API | SQL only | HIGH | CC UDF project |
+| 24 | DataStream API | Not supported. Table API (Java/Python) IS supported; DataStream is not | HIGH | CC docs |
 | 25 | `LATERAL TABLE(UNNEST(...))` | Parse error on CC. Use `CROSS JOIN UNNEST(...)` | HIGH | CC Flink project |
 | 26 | `PROCTIME()` function | Not supported on CC. Use External Tables/KEY_SEARCH_AGG, upsert-kafka join, or event-time temporal join | HIGH | CC docs / community |
 | 27 | `CURRENT_TIMESTAMP` in update-producing queries | Rejected as non-deterministic | MEDIUM | CC docs / community |
 | 28 | `SET 'sql.state-ttl' = '...'` as separate statement | Not allowed. Pass via `--property sql.state-ttl=ms` | MEDIUM | CLI experience |
 | 29 | `--sql-file` flag on `flink statement create` | Does not exist. Read file, pass via `--sql "$(cat file.sql)"` | HIGH | CLI experience |
 | 30 | `CREATE DATABASE` | Not supported on CC | MEDIUM | CC docs / community |
-| 31 | Aggregate UDFs (UDAF), table aggregate functions | Not supported on CC (scalar + table functions only) | HIGH | CC docs / community |
+| 31 | Aggregate UDFs (UDAF), table aggregate functions | UDAF and table aggregates not supported. Scalar UDFs and table functions (UDTF, Java only) ARE supported | HIGH | CC docs |
 | 32 | `CREATE TEMPORARY FUNCTION` | Not supported on CC | MEDIUM | CC docs / community |
 
 ## How to update
