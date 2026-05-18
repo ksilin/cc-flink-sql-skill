@@ -1,0 +1,23 @@
+[
+  {"query": "Write a Flink SQL query to count vehicle telemetry signals per hour on Confluent Cloud", "should_trigger": true},
+  {"query": "How do I create a CC Flink statement with carry-over offsets?", "should_trigger": true},
+  {"query": "My confluent flink statement is stuck in PENDING for 5 minutes", "should_trigger": true},
+  {"query": "What value.format should I use in CREATE TABLE on Confluent Cloud Flink?", "should_trigger": true},
+  {"query": "How do I deploy a UDF JAR to Confluent Cloud Flink?", "should_trigger": true},
+  {"query": "Write a CC Flink SQL join to enrich events from a Postgres lookup table", "should_trigger": true},
+  {"query": "How do I consume from a CC Flink output topic with the confluent CLI?", "should_trigger": true},
+  {"query": "Explain how $rowtime works in Confluent Cloud Flink SQL", "should_trigger": true},
+  {"query": "I need a tumbling window aggregation running on a CFU compute pool", "should_trigger": true},
+  {"query": "How do I use MATCH_RECOGNIZE on Confluent Cloud Flink?", "should_trigger": true},
+
+  {"query": "Write a Kafka Streams topology for word count in Java", "should_trigger": false},
+  {"query": "How do I configure checkpointing interval in Apache Flink?", "should_trigger": false},
+  {"query": "Set up a Flink DataStream job with the Java Table API", "should_trigger": false},
+  {"query": "Debug this PostgreSQL slow query using EXPLAIN ANALYZE", "should_trigger": false},
+  {"query": "Write a Spark SQL window aggregation over a Hive table", "should_trigger": false},
+  {"query": "How do I set up RocksDB as the state backend in Flink?", "should_trigger": false},
+  {"query": "Create a Flink savepoint and restore from it", "should_trigger": false},
+  {"query": "Write a ksqlDB push query for real-time analytics", "should_trigger": false},
+  {"query": "How do I tune parallelism for a Flink TaskManager?", "should_trigger": false},
+  {"query": "Explain the difference between event time and processing time in stream processing", "should_trigger": false}
+]

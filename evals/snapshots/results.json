@@ -1,0 +1,339 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-18T06:55:47.513271+00:00",
+    "claude_cli_version": "2.1.143 (Claude Code)",
+    "model": "claude-haiku-4-5",
+    "n_prompts": 20,
+    "skill_chars": 36538,
+    "isolation": {
+      "system_prompt_override": true,
+      "slash_commands_disabled": true,
+      "prompt_via_stdin": true,
+      "cwd": "/tmp/cc-flink-eval-ixp4wyes",
+      "no_skill_system_prompt": "You are a helpful assistant. Answer the user's question.",
+      "note": "Both arms run from /tmp with --system-prompt override (CLAUDE.md not loaded). Only system prompt content differs."
+    }
+  },
+  "prompts": [
+    {
+      "id": "trap-tvf-window",
+      "prompt": "Write a Flink SQL tumbling window query that counts vehicle telemetry signals per hour, grouped by vehicle_id. The table is called telemetry and has columns vehicle_id, signal_value, and recorded_at. Target runtime is Confluent Cloud.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "TUMBLE(TABLE",
+        "DESCRIPTOR("
+      ],
+      "must_not_contain": [
+        "GROUP BY TUMBLE(recorded_at",
+        "GROUP BY TUMBLE(ts"
+      ],
+      "trap_id": 18
+    },
+    {
+      "id": "trap-json-format",
+      "prompt": "Write the CREATE TABLE DDL for a Flink SQL sink table on Confluent Cloud that outputs JSON to a Kafka topic. The table has columns order_id STRING and total DECIMAL(10,2).",
+      "category": "format_correctness",
+      "must_contain": [
+        "json-registry"
+      ],
+      "must_not_contain": [
+        "'format' = 'json'",
+        "'value.format' = 'json'"
+      ],
+      "trap_id": 20
+    },
+    {
+      "id": "trap-cte-order",
+      "prompt": "Write a Flink SQL INSERT INTO statement on Confluent Cloud that uses a CTE (WITH clause) to pre-filter data before inserting into output_topic. Source table is input_signals with columns signal_id, vehicle_id, temperature.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "INSERT INTO"
+      ],
+      "must_not_contain": [
+        "WITH.*\\n.*INSERT INTO"
+      ],
+      "trap_id": 4
+    },
+    {
+      "id": "trap-unnest",
+      "prompt": "Write CC Flink SQL to explode a JSON array field from a Kafka topic. The input table raw_events has a VARBINARY val column containing JSON with a $.items array. Extract each item as a separate row.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "CROSS JOIN UNNEST"
+      ],
+      "must_not_contain": [
+        "LATERAL TABLE(UNNEST"
+      ],
+      "trap_id": 25
+    },
+    {
+      "id": "trap-proctime",
+      "prompt": "On Confluent Cloud Flink SQL, I need to enrich streaming orders with customer data from an external Postgres database. Write the lookup join pattern.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "KEY_SEARCH_AGG"
+      ],
+      "must_not_contain": [
+        "PROCTIME()"
+      ],
+      "trap_id": 26
+    },
+    {
+      "id": "trap-rowtime-alias",
+      "prompt": "Write a CC Flink SQL query that uses a CTE to prepare data, then does a tumbling window aggregation. The source table is sensor_data. Use the system rowtime column for event time.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "$rowtime"
+      ],
+      "must_not_contain": [
+        "$rowtime AS ",
+        "$rowtime as "
+      ],
+      "trap_id": 8
+    },
+    {
+      "id": "trap-create-catalog",
+      "prompt": "How do I create a new catalog in Confluent Cloud Flink SQL to organize my tables?",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "not creatable",
+        "environment",
+        "cannot",
+        "auto"
+      ],
+      "must_not_contain": [
+        "CREATE CATALOG"
+      ],
+      "trap_id": 1
+    },
+    {
+      "id": "trap-savepoint",
+      "prompt": "I want to upgrade my running Flink SQL statement on Confluent Cloud to a new version. How do I create a savepoint and restore from it?",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "not exposed",
+        "not available",
+        "not supported",
+        "carry-over",
+        "cannot"
+      ],
+      "must_not_contain": [
+        "STOP WITH SAVEPOINT",
+        "CREATE SAVEPOINT",
+        "confluent flink savepoint create"
+      ],
+      "trap_id": 22
+    },
+    {
+      "id": "trap-debezium-format",
+      "prompt": "I need to read Debezium CDC data in Confluent Cloud Flink SQL. What format value should I use in the CREATE TABLE WITH clause?",
+      "category": "format_correctness",
+      "must_contain": [
+        "debezium-registry"
+      ],
+      "must_not_contain": [
+        "'debezium-json'",
+        "'format' = 'debezium"
+      ],
+      "trap_id": 21
+    },
+    {
+      "id": "cli-create-flags",
+      "prompt": "Write the confluent CLI command to create a new Flink SQL statement from a file called filter.sql on compute pool lfcp-abc123 in environment env-xyz789.",
+      "category": "cli_correctness",
+      "must_contain": [
+        "--environment",
+        "--sql"
+      ],
+      "must_not_contain": [
+        "--sql-file",
+        "--cloud.*--region.*statement create"
+      ],
+      "trap_id": 29
+    },
+    {
+      "id": "cli-list-flags",
+      "prompt": "Write the confluent CLI command to list all running Flink statements in AWS eu-central-1.",
+      "category": "cli_correctness",
+      "must_contain": [
+        "--cloud",
+        "--region"
+      ],
+      "must_not_contain": [],
+      "trap_id": null
+    },
+    {
+      "id": "cli-describe-flags",
+      "prompt": "Write the confluent CLI command to check the status of a Flink statement called my-filter-v2 running in AWS us-east-1.",
+      "category": "cli_correctness",
+      "must_contain": [
+        "--cloud",
+        "--region",
+        "describe"
+      ],
+      "must_not_contain": [],
+      "trap_id": null
+    },
+    {
+      "id": "trap-datastream",
+      "prompt": "Write a Confluent Cloud Flink job in Java using the DataStream API to filter Kafka messages by vehicle_id.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "SQL only",
+        "not supported",
+        "not available",
+        "SQL-only"
+      ],
+      "must_not_contain": [
+        "StreamExecutionEnvironment",
+        "DataStream<",
+        "env.fromSource"
+      ],
+      "trap_id": 24
+    },
+    {
+      "id": "trap-checkpointing",
+      "prompt": "How do I configure checkpointing interval for my Flink SQL statement on Confluent Cloud?",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "managed",
+        "not settable",
+        "not supported",
+        "not configurable",
+        "cannot"
+      ],
+      "must_not_contain": [
+        "SET 'execution.checkpointing"
+      ],
+      "trap_id": 2
+    },
+    {
+      "id": "trap-connector-ddl",
+      "prompt": "Write a CREATE TABLE statement for a Kafka source in Confluent Cloud Flink SQL with topic 'vehicle-signals' and bootstrap servers.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "auto-map",
+        "auto-discover",
+        "automatic",
+        "already exist"
+      ],
+      "must_not_contain": [
+        "'connector' = 'kafka'",
+        "'properties.bootstrap.servers'"
+      ],
+      "trap_id": 3
+    },
+    {
+      "id": "trap-temp-view",
+      "prompt": "Create a reusable named view in Confluent Cloud Flink SQL that filters sensor_data where temperature > 100.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "WITH",
+        "CTE"
+      ],
+      "must_not_contain": [
+        "CREATE TEMPORARY VIEW",
+        "CREATE VIEW"
+      ],
+      "trap_id": 5
+    },
+    {
+      "id": "trap-watermark-modify",
+      "prompt": "I need to change the watermark on an existing table in Confluent Cloud Flink SQL. Write the ALTER TABLE statement.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "MODIFY"
+      ],
+      "must_not_contain": [
+        "ALTER TABLE.*ADD WATERMARK"
+      ],
+      "trap_id": 9
+    },
+    {
+      "id": "trap-timestamp-cast",
+      "prompt": "In CC Flink SQL, cast the ISO-8601 string '2024-06-15T10:30:00Z' to a TIMESTAMP value.",
+      "category": "trap_avoidance",
+      "must_contain": [
+        "TO_TIMESTAMP"
+      ],
+      "must_not_contain": [
+        "CAST('2024-06-15T10:30:00Z' AS TIMESTAMP)"
+      ],
+      "trap_id": 13
+    },
+    {
+      "id": "trap-state-ttl",
+      "prompt": "How do I set state TTL for a Flink SQL statement on Confluent Cloud?",
+      "category": "cli_correctness",
+      "must_contain": [
+        "--property"
+      ],
+      "must_not_contain": [
+        "SET 'sql.state-ttl'",
+        "SET 'table.exec.state.ttl'"
+      ],
+      "trap_id": 28
+    },
+    {
+      "id": "trap-match-recognize-limits",
+      "prompt": "Write a MATCH_RECOGNIZE query on Confluent Cloud Flink SQL that detects when a sensor reading spikes: 3+ consecutive increases followed by a value over 200. Partition by sensor_id, order by reading_time.",
+      "category": "pattern_quality",
+      "must_contain": [
+        "MATCH_RECOGNIZE",
+        "PARTITION BY",
+        "ORDER BY"
+      ],
+      "must_not_contain": [
+        "PREV(",
+        "NEXT("
+      ],
+      "trap_id": 12
+    }
+  ],
+  "arms": {
+    "no_skill": [
+      "Here's a Confluent Cloud Flink SQL tumbling window query for your use case:\n\n```sql\nSELECT \n  TUMBLE_START(recorded_at, INTERVAL '1' HOUR) as window_start,\n  TUMBLE_END(recorded_at, INTERVAL '1' HOUR) as window_end,\n  vehicle_id,\n  COUNT(*) as signal_count,\n  COUNT(DISTINCT signal_value) as unique_signals\nFROM telemetry\nGROUP BY \n  TUMBLE(recorded_at, INTERVAL '1' HOUR),\n  vehicle_id;\n```\n\n**Key points for Confluent Cloud:**\n\n| Aspect | Details |\n|--------|---------|\n| **Event Time Column** | `recorded_at` must be `TIMESTAMP` type; if not set as event time in table DDL, add `WATERMARK FOR recorded_at AS recorded_at - INTERVAL '5' SECOND` |\n| **Window Function** | `TUMBLE()` creates non-overlapping 1-hour buckets; records assigned to bucket where `recorded_at` falls |\n| **Grouping** | Both window function AND `vehicle_id` required in GROUP BY |\n| **Output Columns** | `TUMBLE_START` / `TUMBLE_END` give bucket boundaries; `signal_count` = row count per vehicle per hour |\n\n**If `recorded_at` isn't event time**, define watermark in table creation:\n\n```sql\nCREATE TABLE telemetry (\n  vehicle_id STRING,\n  signal_value DOUBLE,\n  recorded_at TIMESTAMP(3),\n  WATERMARK FOR recorded_at AS recorded_at - INTERVAL '5' SECOND\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'vehicle-telemetry',\n  -- ... other Kafka properties\n);\n```\n\n**To sink results to Kafka:**\n\n```sql\nCREATE TABLE telemetry_hourly_counts (\n  window_start TIMESTAMP(3),\n  window_end TIMESTAMP(3),\n  vehicle_id STRING,\n  signal_count BIGINT,\n  PRIMARY KEY (window_start, window_end, vehicle_id) NOT ENFORCED\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'telemetry-hourly-counts',\n  'value.format' = 'json'\n);\n\nINSERT INTO telemetry_hourly_counts\nSELECT window_start, window_end, vehicle_id, signal_count\nFROM (SELECT \n  TUMBLE_START(recorded_at, INTERVAL '1' HOUR) as window_start,\n  TUMBLE_END(recorded_at, INTERVAL '1' HOUR) as window_end,\n  vehicle_id,\n  COUNT(*) as signal_count\nFROM telemetry\nGROUP BY TUMBLE(recorded_at, INTERVAL '1' HOUR), vehicle_id);\n```\n\n**Run in CC:**\n\n```bash\nflink sql-client.sh --jar /usr/lib/flink/lib/confluent-cloud-flink-connector-*.jar\n```\n\n★ Insight ─────────────────────────────────────\nConfluent Cloud Flink differs from Apache Flink: watermarks auto-propagate from Kafka offsets/timestamps, so omitting them doesn't break; tumbling windows bucket by event time (not ingestion time), critical for late-arriving telemetry; COUNT(*) counts rows, COUNT(DISTINCT signal_value) reveals signal variance—both useful for vehicle health monitoring.\n─────────────────────────────────────────────────",
+      "```sql\nCREATE TABLE orders_sink (\n  order_id STRING,\n  total DECIMAL(10, 2),\n  PRIMARY KEY (order_id) NOT ENFORCED\n) WITH (\n  'connector' = 'upsert-kafka',\n  'topic' = 'orders-output',\n  'properties.bootstrap.servers' = '<confluent-cloud-broker>:9092',\n  'properties.security.protocol' = 'SASL_SSL',\n  'properties.sasl.mechanism' = 'PLAIN',\n  'properties.sasl.jaas.config' = 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"<API_KEY>\" password=\"<API_SECRET>\";',\n  'value.format' = 'json',\n  'key.format' = 'raw'\n);\n```\n\n★ Insight ─────────────────────────────────────\n**upsert-kafka vs kafka**: `upsert-kafka` requires PRIMARY KEY and supports update/delete semantics—use for stateful sinks. `kafka` is append-only. Choose upsert-kafka for orders (keyed by order_id).\n\n**CC credentials**: Replace `<confluent-cloud-broker>`, `<API_KEY>`, `<API_SECRET>` with actual values. CC requires SASL_SSL. Store secrets in environment variables or CC connector properties, not hardcoded.\n\n**JSON format**: `value.format='json'` outputs the full row as JSON. `key.format='raw'` serializes the primary key as string.\n─────────────────────────────────────────────────\n\nReplace placeholders:\n- `orders-output` → your topic name\n- `<confluent-cloud-broker>` → broker from CC cluster settings (e.g., `pkc-abc123.region.provider.confluent.cloud`)\n- `<API_KEY>`, `<API_SECRET>` → CC API credentials (use env vars in production)",
+      "Flink SQL INSERT with CTE on Confluent Cloud:\n\n```sql\nINSERT INTO output_topic\nWITH filtered_signals AS (\n  SELECT \n    signal_id,\n    vehicle_id,\n    temperature\n  FROM input_signals\n  WHERE temperature > 0 \n    AND temperature < 120\n    AND vehicle_id IS NOT NULL\n)\nSELECT \n  signal_id,\n  vehicle_id,\n  temperature,\n  CURRENT_TIMESTAMP AS processed_at\nFROM filtered_signals;\n```\n\n**Key points:**\n\n- **CTE filters first** — WHERE conditions in `filtered_signals` execute before INSERT, reducing downstream data volume\n- **output_topic** — sink must be pre-created in CC; Flink infers schema from SELECT\n- **CURRENT_TIMESTAMP** — adds processing time; useful for windowing/ordering in downstream consumers\n- **NULL check** — prevents invalid vehicle_id values from reaching sink\n\nAdjust WHERE conditions per your business logic. If output_topic has strict schema, SELECT columns must match sink definition order + types.",
+      "```sql\nCREATE TABLE exploded_events AS\nSELECT \n  event_metadata.*,\n  item\nFROM raw_events\nCROSS JOIN LATERAL (\n  SELECT item\n  FROM (\n    SELECT \n      CAST(val AS STRING) as json_str\n    FROM raw_events\n  )\n  CROSS JOIN UNNEST(\n    JSON_ARRAY(JSON_EXTRACT_ARRAY(json_str, '$.items'))\n  ) AS t(item)\n);\n```\n\nBetter approach using **LATERAL flattening** (CC Flink pattern):\n\n```sql\n-- If you want to keep metadata columns alongside exploded items:\nSELECT \n  event_id,\n  event_ts,\n  item\nFROM raw_events,\nLATERAL (\n  SELECT \n    item_elem\n  FROM (\n    SELECT JSON_EXTRACT_ARRAY(CAST(val AS STRING), '$.items') as items\n  )\n  CROSS JOIN UNNEST(items) AS t(item_elem)\n) AS exploded;\n```\n\n**Simplest form** — if raw_events already has other columns:\n\n```sql\nSELECT \n  *,\n  item\nFROM raw_events\nCROSS JOIN LATERAL (\n  SELECT item\n  FROM UNNEST(\n    JSON_EXTRACT_ARRAY(CAST(val AS STRING), '$.items')\n  ) AS t(item)\n);\n```\n\n`★ Insight ─────────────────────────────────────`\n**CC Flink JSON explosion pattern**: VARBINARY → CAST to STRING → JSON_EXTRACT_ARRAY() → UNNEST() via LATERAL join. The CROSS JOIN LATERAL syntax is CC Flink's way to flatten nested structures while preserving outer row context. JSON_EXTRACT_ARRAY returns an ARRAY type that UNNEST can consume.\n`─────────────────────────────────────────────────`\n\n**Key points:**\n- `CAST(val AS STRING)` converts VARBINARY to parseable JSON\n- `JSON_EXTRACT_ARRAY('$.items')` extracts array at path\n- `UNNEST()` converts array elements to rows\n- `LATERAL` keeps outer row context (important for joins with metadata)\n\nWhat columns besides `val` does `raw_events` have? I can refine the SELECT list.",
+      "Lookup join pattern for CC-Flink + Postgres:\n\n```sql\n-- 1. Orders stream (Kafka)\nCREATE TABLE orders (\n  order_id BIGINT,\n  customer_id BIGINT,\n  amount DECIMAL(10, 2),\n  order_time TIMESTAMP(3),\n  WATERMARK FOR order_time AS order_time - INTERVAL '5' SECOND\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'orders',\n  'properties.bootstrap.servers' = 'localhost:9092',\n  'format' = 'json'\n);\n\n-- 2. Customer reference data (Postgres via JDBC)\nCREATE TABLE customers (\n  customer_id BIGINT,\n  name STRING,\n  email STRING,\n  segment STRING,\n  PRIMARY KEY (customer_id) NOT ENFORCED\n) WITH (\n  'connector' = 'jdbc',\n  'url' = 'jdbc:postgresql://postgres-host:5432/mydb',\n  'table-name' = 'customers',\n  'username' = 'user',\n  'password' = 'pwd',\n  'connection.max-retry-attempts' = '3',\n  'lookup.cache.max-rows' = '10000',\n  'lookup.cache.ttl' = '3600s'\n);\n\n-- 3. Lookup join enrichment\nCREATE TABLE enriched_orders AS\nSELECT\n  o.order_id,\n  o.customer_id,\n  c.name,\n  c.email,\n  c.segment,\n  o.amount,\n  o.order_time\nFROM orders o\nLEFT JOIN customers c\n  ON o.customer_id = c.customer_id;\n```\n\n**Key config tuples for CC-Flink:**\n\n| Setting | Purpose |\n|---------|---------|\n| `lookup.cache.max-rows` | Local cache size (reduces Postgres hits) |\n| `lookup.cache.ttl` | Cache expiry; balance freshness vs. load |\n| `connection.max-retry-attempts` | Retry failed Postgres fetches |\n| `lookup.max-retries` | Async lookup retry policy |\n| `lookup.async` | Enable async I/O (default true in CC-Flink) |\n\n**Common pitfalls:**\n\n- No PRIMARY KEY on customers table → join fails validation\n- Cache TTL too high → stale customer data; too low → Postgres hammered\n- Missing error handling → failed lookups silently drop records (use LEFT JOIN to retain orders)\n- Connection pool exhaustion → add `connection.pool-size` (default ~10)\n\n**For production, add:**\n```sql\n-- State backend config (store state in CMS)\nSET 'state.backend' = 'rocksdb';\nSET 'state.savepoints.dir' = 'gs://bucket/flink-state';\nSET 'state.checkpoints.dir' = 'gs://bucket/flink-checkpoints';\n```\n\nWant async error handling or checkpoint tuning?",
+      "Here's a CC Flink SQL query with CTE + tumbling window aggregation:\n\n```sql\nWITH prepared_data AS (\n  SELECT \n    sensor_id,\n    temperature,\n    humidity,\n    ROWTIME() AS event_time,\n    CAST(ROWTIME() AS TIMESTAMP(3)) AS event_ts\n  FROM sensor_data\n  WHERE temperature IS NOT NULL\n    AND humidity IS NOT NULL\n)\nSELECT \n  TUMBLE_START(event_time, INTERVAL '5' MINUTE) AS window_start,\n  TUMBLE_END(event_time, INTERVAL '5' MINUTE) AS window_end,\n  sensor_id,\n  COUNT(*) AS reading_count,\n  AVG(temperature) AS avg_temp,\n  MAX(humidity) AS max_humidity,\n  MIN(temperature) AS min_temp\nFROM prepared_data\nGROUP BY \n  sensor_id,\n  TUMBLE(event_time, INTERVAL '5' MINUTE)\nORDER BY window_start DESC;\n```\n\n**Key points:**\n\n- **CTE** (`WITH prepared_data`): Filters nulls, extracts ROWTIME for event-time semantics\n- **ROWTIME()**: System column providing watermarked event time (required for tumbling windows)\n- **TUMBLE()**: 5-minute fixed windows, no overlap\n- **TUMBLE_START/END**: Window boundaries in result set\n- **GROUP BY TUMBLE()**: Partitions data by sensor + window\n\n**Adjust interval to fit your needs**: Replace `'5' MINUTE` with `'1' HOUR`, `'10' SECOND`, etc.\n\n★ Insight ─────────────────────────────────────\nCC Flink SQL requires explicit ROWTIME() for watermarked event-time processing (not processing time). CTEs here isolate data prep logic, making the window aggregation cleaner. TUMBLE is one-shot partitioning—each event lands in exactly one window, unlike SLIDING or SESSION windows.\n─────────────────────────────────────────────────",
+      "**Catalogs in CC Flink SQL — quick answer:**\n\nNo native \"CREATE CATALOG\" command in Confluent Cloud Flink SQL (unlike Apache Flink). Instead, organize via:\n\n1. **Databases** (primary grouping):\n   ```sql\n   CREATE DATABASE mydb;\n   USE mydb;\n   CREATE TABLE mytable (...);\n   ```\n\n2. **Default catalog** is `ververica` (immutable). All tables live there.\n\n3. **Naming convention** for structure:\n   - `ververica.database.table` fully qualified\n   - Set database context with `USE mydb`\n\n**For multi-workspace isolation**, use separate Flink environments or Confluent API to provision new compute pools.\n\n**Limitation**: CC Flink doesn't support custom catalog creation like Apache Flink does (no `CREATE CATALOG` statement). Use databases as your organizational layer instead.\n\nNeed specific schema layout or API setup? Ask and I'll detail exact SQL.",
+      "Upgrading Flink SQL on Confluent Cloud requires: create savepoint → stop job → update statement → restore.\n\n**Create Savepoint**\n\n```bash\nconfluent flink statement create \\\n  --compute-pool <pool-id> \\\n  --name savepoint-upgrade \\\n  --statement \"SELECT * FROM your_topic\"\n```\n\nFor running job, trigger savepoint via UI or API:\n- **UI**: Statement → ⋮ menu → \"Create Savepoint\"\n- **API**: `POST /v1/statements/{statement-id}/savepoint`\n\nSavepoint stores state + operator snapshots. Confluent Cloud stores in managed backend (no manual path needed).\n\n**Stop Job**\n\nOnce savepoint succeeds (status \"COMPLETED\"):\n- UI: Statement → Stop\n- Stops gracefully, preserves offsets\n\n**Update Statement & Restore**\n\n```bash\nconfluent flink statement create \\\n  --compute-pool <pool-id> \\\n  --name upgraded-statement \\\n  --statement \"SELECT new_col FROM your_topic\" \\\n  --savepoint <savepoint-id>\n```\n\nCLI won't expose savepoint IDs directly—use UI to copy savepoint ID from \"Savepoints\" tab.\n\n**Critical on Confluent Cloud:**\n- Savepoints auto-managed (not local files)\n- Restore works only if schema/source compatibility maintained\n- Offset management automatic via state backend\n- No manual state directory needed (differs from Apache Flink)\n\nTimeout? Check statement history for errors. Savepoint valid ~7 days on Confluent Cloud.",
+      "Format depends on Debezium encoding:\n\n**Most common:**\n```sql\nCREATE TABLE your_table (\n  ...\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'your-topic',\n  'properties.bootstrap.servers' = '...',\n  'format' = 'debezium-json'\n);\n```\n\n**Other options:**\n- `'format' = 'debezium-avro'` — Avro-encoded Debezium records\n- `'format' = 'debezium-protobuf'` — Protobuf-encoded Debezium records\n\nCheck Debezium connector config—whatever encoder your source uses. If unsure, `debezium-json` handle most PostgreSQL/MySQL CDC setups.\n\nNeed specific Debezium connector config? Share topic/payload sample.",
+      "```bash\nconfluent flink statement create --file filter.sql --compute-pool lfcp-abc123 --environment env-xyz789\n```\n\nCommand reads SQL from file, deploys to specified compute pool & environment. Optional: add `--name <statement-name>` to label it.",
+      "List running Flink statements in eu-central-1:\n\n```bash\nconfluent flink statement list --region eu-central-1 --status RUNNING\n```\n\nOr without status filter (shows all):\n\n```bash\nconfluent flink statement list --region eu-central-1\n```\n\n**Notes:**\n- Must be authenticated: `confluent login`\n- May need `--environment` flag if multiple environments\n- Statement status values: `RUNNING`, `STOPPED`, `COMPLETED`, `FAILED`\n- Use `--output json` for parsing output",
+      "Check Flink statement status with:\n\n```bash\nconfluent flink statement describe my-filter-v2\n```\n\nOr list all statements to see status:\n\n```bash\nconfluent flink statement list\n```\n\nIf working with specific environment/cluster, add flags:\n\n```bash\nconfluent flink statement describe my-filter-v2 \\\n  --environment <env-id> \\\n  --cluster <cluster-id>\n```\n\nRegion (us-east-1) set in environment context, not in statement command.",
+      "Here's complete Flink DataStream job for Confluent Cloud filtering by vehicle_id:\n\n```java\nimport org.apache.flink.api.common.functions.FilterFunction;\nimport org.apache.flink.api.common.serialization.SimpleStringSchema;\nimport org.apache.flink.connector.kafka.source.KafkaSource;\nimport org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;\nimport org.apache.flink.streaming.api.datastream.DataStream;\nimport org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;\nimport org.apache.flink.connector.kafka.sink.KafkaSink;\nimport com.fasterxml.jackson.databind.JsonNode;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class VehicleFilterJob {\n\n    private static final ObjectMapper objectMapper = new ObjectMapper();\n\n    public static void main(String[] args) throws Exception {\n        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();\n        env.enableCheckpointing(60000);\n\n        // Kafka source configuration for Confluent Cloud\n        KafkaSource<String> kafkaSource = KafkaSource.<String>builder()\n                .setBootstrapServers(\"pkc-xxxxx.us-east-1.provider.confluent.cloud:9092\")\n                .setTopics(\"vehicle-events\")\n                .setGroupId(\"vehicle-filter-group\")\n                .setStartingOffsets(OffsetsInitializer.latest())\n                .setValueOnlyDeserializer(new SimpleStringSchema())\n                // Confluent Cloud SASL/SSL authentication\n                .setProperty(\"security.protocol\", \"SASL_SSL\")\n                .setProperty(\"sasl.mechanism\", \"PLAIN\")\n                .setProperty(\"sasl.jaas.config\",\n                    \"org.apache.kafka.common.security.plain.PlainLoginModule required \" +\n                    \"username='API_KEY' password='API_SECRET';\")\n                .build();\n\n        // Read from Kafka source\n        DataStream<String> sourceStream = env.fromSource(\n                kafkaSource,\n                org.apache.flink.api.common.eventtime.WatermarkStrategy.noWatermarks(),\n                \"KafkaSource\"\n        );\n\n        // Filter by vehicle_id\n        DataStream<String> filtered = sourceStream\n                .filter(new VehicleIdFilterFunction(\"truck-001\"))\n                .name(\"FilterByVehicleId\");\n\n        // Write filtered results back to Kafka\n        KafkaSink<String> kafkaSink = KafkaSink.<String>builder()\n                .setBootstrapServers(\"pkc-xxxxx.us-east-1.provider.confluent.cloud:9092\")\n                .setRecordSerializer(\n                    org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema.builder()\n                            .setTopic(\"vehicle-events-filtered\")\n                            .setValueSerializationSchema(new SimpleStringSchema())\n                            .build()\n                )\n                .setProperty(\"security.protocol\", \"SASL_SSL\")\n                .setProperty(\"sasl.mechanism\", \"PLAIN\")\n                .setProperty(\"sasl.jaas.config\",\n                    \"org.apache.kafka.common.security.plain.PlainLoginModule required \" +\n                    \"username='API_KEY' password='API_SECRET';\")\n                .setDeliverGuarantee(org.apache.flink.connector.kafka.sink.Semantic.AT_LEAST_ONCE)\n                .build();\n\n        filtered.sinkTo(kafkaSink).name(\"KafkaSink\");\n        env.execute(\"VehicleFilterJob\");\n    }\n\n    /**\n     * Parse JSON, extract vehicle_id, match target value\n     */\n    public static class VehicleIdFilterFunction implements FilterFunction<String> {\n        private final String targetVehicleId;\n\n        public VehicleIdFilterFunction(String targetVehicleId) {\n            this.targetVehicleId = targetVehicleId;\n        }\n\n        @Override\n        public boolean filter(String message) throws Exception {\n            try {\n                JsonNode node = objectMapper.readTree(message);\n                String vehicleId = node.get(\"vehicle_id\").asText();\n                return targetVehicleId.equals(vehicleId);\n            } catch (Exception e) {\n                System.err.println(\"Parse error: \" + message);\n                return false;  // Filter out malformed messages\n            }\n        }\n    }\n}\n```\n\n**Setup Steps:**\n\n1. **Update credentials:**\n   - Replace `pkc-xxxxx...` with your CC cluster bootstrap server\n   - Replace `API_KEY` / `API_SECRET` with Confluent Cloud API credentials\n   - Update source/sink topic names\n\n2. **Maven dependencies:**\n```xml\n<dependency>\n    <groupId>org.apache.flink</groupId>\n    <artifactId>flink-connector-kafka</artifactId>\n    <version>3.1.0-1.18</version>\n</dependency>\n<dependency>\n    <groupId>com.fasterxml.jackson.core</groupId>\n    <artifactId>jackson-databind</artifactId>\n    <version>2.15.2</version>\n</dependency>\n```\n\n3. **Deploy to Confluent Cloud:**\n```bash\nflink run -d -c com.example.VehicleFilterJob target/vehicle-filter-job.jar\n```\n\n`★ Insight ─────────────────────────────────────`\n**DataStream vs SQL**: DataStream API gives explicit control over filter logic; better for complex JSON parsing and custom error handling. SQL would be simpler but less flexible.\n\n**Error Handling**: Malformed JSON filtered out silently (returns false). Production should log to dead-letter topic instead.\n\n**Semantic Guarantee**: AT_LEAST_ONCE prevents message loss but allows duplicates. For exactly-once, requires transactional sink (trade-off: latency/throughput).\n`─────────────────────────────────────────────────`",
+      "Checkpointing interval on CC Flink set at **compute pool level**, not per SQL statement.\n\n## Configuration Methods\n\n### Via Flink SQL Job Config\n```sql\n-- Set during job creation/update\nSET execution.checkpointing.interval = 30000;  -- milliseconds\n```\n\n### Via CC API/Console\nCheckpoint interval configured in compute pool settings:\n- **Location**: Confluent Cloud console → Flink → Environment → Compute Pool → Configuration\n- **Property**: `execution.checkpointing.interval`\n- **Value**: milliseconds (e.g., 30000 = 30 seconds)\n\n### Via Terraform/IaC\n```hcl\nresource \"confluent_flink_compute_pool\" \"example\" {\n  display_name = \"my-pool\"\n  csu           = 4\n  \n  # Checkpoint settings\n  config = {\n    \"execution.checkpointing.interval\" = \"30000\"\n  }\n}\n```\n\n## Key Settings\n\n| Setting | Default | What It Does |\n|---------|---------|-------------|\n| `execution.checkpointing.interval` | 60000ms | How often to trigger checkpoints |\n| `execution.checkpointing.timeout` | 600000ms | Max time to complete checkpoint |\n| `execution.checkpointing.mode` | EXACTLY_ONCE | Fault tolerance level |\n\n## Trade-offs\n\n**Lower interval** (e.g., 10s): More frequent saves → Better recovery but more I/O, lower throughput\n**Higher interval** (e.g., 120s): Less overhead but longer recovery time on failure\n\n**Recommended**: 30-60 seconds for most workloads. Adjust based on your state size and fault tolerance needs.",
+      "```sql\nCREATE TABLE vehicle_signals (\n  signal_id STRING,\n  vehicle_id STRING,\n  timestamp BIGINT,\n  signal_type STRING,\n  signal_value DOUBLE,\n  WATERMARK FOR ROWTIME AS CAST(CAST(timestamp AS BIGINT) * 1000 AS TIMESTAMP(3))\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'vehicle-signals',\n  'properties.bootstrap.servers' = '<bootstrap-server-host>:9092',\n  'properties.security.protocol' = 'SASL_SSL',\n  'properties.sasl.mechanism' = 'PLAIN',\n  'properties.sasl.jaas.config' = 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"<api-key>\" password=\"<api-secret>\";',\n  'format' = 'json',\n  'json.fail-on-missing-field' = 'false',\n  'json.ignore-parse-errors' = 'true'\n);\n```\n\n**Key points**:\n\n- Replace `<bootstrap-server-host>` with CC bootstrap endpoint (e.g., `pkc-xxxxx.us-east-1.provider.confluent.cloud`)\n- Replace `<api-key>` and `<api-secret>` with CC API credentials\n- Port `9092` standard for SASL_SSL\n- WATERMARK enables event-time semantics on `timestamp` field\n- Format typically `json`, `avro`, or `protobuf` — adjust schema + format connector\n- `json.ignore-parse-errors` lets bad messages pass through (skip for strict validation)\n\n**Secure credentials**: Use environment variables or Confluent secret store instead of hardcoding:\n```sql\n'properties.sasl.jaas.config' = '${KAFKA_JAAS_CONFIG}'\n```",
+      "Named view in CC Flink SQL filters data once, reuse in multiple queries:\n\n```sql\nCREATE VIEW high_temp_sensors AS\nSELECT *\nFROM sensor_data\nWHERE temperature > 100;\n```\n\n**Usage** — query view like table:\n```sql\nSELECT sensor_id, temperature, timestamp\nFROM high_temp_sensors\nWHERE timestamp > '2026-05-18 00:00:00';\n```\n\n**Key points**:\n- View is logical layer, no storage cost\n- Persists in catalog until `DROP VIEW high_temp_sensors`\n- Can chain views (view on view)\n- Filter pushdown happens automatically — Flink optimizes underlying query\n\n**Alternative** — temporary session view (exists only current session):\n```sql\nCREATE TEMPORARY VIEW high_temp_sensors AS\nSELECT * FROM sensor_data WHERE temperature > 100;\n```\n\nDrop `TEMPORARY` to persist view across sessions in CC workspace.\n\nWhich environment running this in—local dev, CC Flink cluster, or Confluent Cloud Console?",
+      "CC-Flink SQL **doesn't support altering watermarks directly**. ALTER TABLE can't modify watermark definitions.\n\n**Two options:**\n\n**1. Recreate table (clean, idiomatic)**\n```sql\nDROP TABLE IF EXISTS your_table;\n\nCREATE TABLE your_table (\n  col1 INT,\n  col2 STRING,\n  ts TIMESTAMP(3),\n  WATERMARK FOR ts AS ts - INTERVAL '5' SECOND\n) WITH (\n  'connector' = 'kafka',\n  ...\n);\n```\n\n**2. Create new table, migrate data, rename (zero downtime)**\n```sql\nCREATE TABLE your_table_new AS SELECT * FROM your_table;\n\nDROP TABLE your_table;\nALTER TABLE your_table_new RENAME TO your_table;\n```\n\n**Key constraint:** Watermark definition tied to table schema. Can't change mid-stream without schema change. Both approach require table recreation.\n\nWhat's your watermark change? (interval adjustment, different column?) Can optimize approach based on table size/schema.",
+      "Cast ISO-8601 string to TIMESTAMP in CC Flink SQL:\n\n```sql\nCAST('2024-06-15T10:30:00Z' AS TIMESTAMP(3))\n```\n\nOr with timezone awareness:\n\n```sql\nCAST('2024-06-15T10:30:00Z' AS TIMESTAMP(3) WITH TIME ZONE)\n```\n\n**Key points:**\n- `TIMESTAMP(3)` = millisecond precision (default in Flink)\n- `WITH TIME ZONE` preserves UTC offset (important for '...Z' format)\n- Flink recognizes ISO-8601 format natively\n- Result: `2024-06-15 10:30:00` (or `2024-06-15 10:30:00 UTC` with TZ)\n\n**In SELECT:**\n```sql\nSELECT CAST('2024-06-15T10:30:00Z' AS TIMESTAMP(3)) AS event_time\n```\n\nWithout `WITH TIME ZONE`, trailing 'Z' stripped but value normalized to UTC.",
+      "State TTL on Confluent Cloud Flink SQL set via table properties in CREATE or ALTER TABLE statements.\n\n**Two approaches:**\n\n**1. Table-level (during creation)**\n```sql\nCREATE TABLE my_table (\n  id STRING,\n  value INT\n) WITH (\n  'state.ttl.ms' = '3600000',  -- 1 hour in milliseconds\n  'state.ttl.update-type' = 'OnReadAndWrite'\n);\n```\n\n**2. Statement-level (via SET)**\n```sql\nSET 'state.ttl.ms' = '3600000';\nSET 'state.ttl.update-type' = 'OnCreateAndWrite';\n```\n\n**Key Properties:**\n\n| Property | Values | Default |\n|----------|--------|---------|\n| `state.ttl.ms` | Milliseconds (long) | No TTL (infinite) |\n| `state.ttl.update-type` | `OnCreateAndWrite`, `OnReadAndWrite` | `OnCreateAndWrite` |\n\n- **OnCreateAndWrite**: Update TTL on entry creation + write ops\n- **OnReadAndWrite**: Also update on read ops (more CPU, cleaner state)\n\n**For stateful operations** (joins, aggregations):\n```sql\nSELECT \n  a.id,\n  COUNT(*) OVER (PARTITION BY a.id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as cnt\nFROM table_a a\nGROUP BY a.id;\n```\nTTL applies to grouped state automatically.\n\n**Check current settings:**\n```sql\nSHOW CURRENT_CATALOG;\nSHOW PARAMETERS LIKE 'state%';\n```\n\nState older than TTL gets garbage collected, reducing memory overhead. Useful for stateful operations on high-cardinality keys (session windows, count-distinct).",
+      "MATCH_RECOGNIZE detects 3+ consecutive increases then spike. Pattern logic:\n- `A` = baseline row\n- `B{3,}` = 3+ rows each higher than previous\n- `C` = final row with reading > 200\n\n```sql\nSELECT \n  sensor_id,\n  reading_time,\n  reading,\n  match_number\nFROM sensor_readings\nMATCH_RECOGNIZE (\n  PARTITION BY sensor_id\n  ORDER BY reading_time\n  MEASURES\n    FIRST(reading_time) as reading_time,\n    LAST(reading) as reading,\n    CLASSIFIER() as pattern_match\n  PATTERN (A B{3,} C)\n  DEFINE\n    A AS TRUE,\n    B AS reading > PREV(reading),\n    C AS reading > 200\n) AS pattern_matches;\n```\n\n**Pattern breakdown:**\n- `A`: Any row (starts match)\n- `B{3,}`: Exactly 3+ consecutive rows where each reading increases from previous\n- `C`: Concluding row exceeding 200\n\n**Output columns:**\n- `FIRST(reading_time)`: Time of first increase (from `A`)\n- `LAST(reading)`: Final spiked value (from `C`)\n- `CLASSIFIER()`: Which state matched (for debugging)\n\n**Tuning notes:**\n- Add `AFTER MATCH SKIP PAST LAST ROW` if overlapping matches unnecessary\n- Use `match_number` to track occurrence sequence per sensor\n- Filter `C` definition to `C AS reading > 200 AND reading > PREV(reading)` if spike must exceed previous value too\n\nRuns on Confluent Cloud Flink with no additional config needed."
+    ],
+    "with_skill": [
+      "Using **cc-flink-sql** skill. Loading dialect traps + SQL patterns.\n\n## Tumbling Window Query (CC Flink)\n\n```sql\n-- EXPLAIN first (free validation, catches parse/type errors)\nEXPLAIN\nSELECT\n  window_start,\n  window_end,\n  vehicle_id,\n  COUNT(*) as signal_count\nFROM TABLE(\n  TUMBLE(TABLE telemetry, DESCRIPTOR(recorded_at), INTERVAL '1' HOUR)\n)\nGROUP BY window_start, window_end, vehicle_id;\n```\n\nOnce EXPLAIN succeeds (shows plan), create as statement:\n\n```sql\nCREATE TABLE hourly_vehicle_signals (\n  window_start TIMESTAMP(3),\n  window_end TIMESTAMP(3),\n  vehicle_id STRING,\n  signal_count BIGINT\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'hourly-vehicle-signals',\n  'value.format' = 'json-registry',  -- CC-only format, NOT 'json'\n  'changelog.mode' = 'append'\n);\n\nINSERT INTO hourly_vehicle_signals\nSELECT\n  window_start,\n  window_end,\n  vehicle_id,\n  COUNT(*) as signal_count\nFROM TABLE(\n  TUMBLE(TABLE telemetry, DESCRIPTOR(recorded_at), INTERVAL '1' HOUR)\n)\nGROUP BY window_start, window_end, vehicle_id;\n```\n\n### CLI Deployment\n\n```bash\n# Assume env vars set: COMPUTE_POOL, CLUSTER_ID, ENV_ID\nconfluent flink statement create hourly-signals \\\n  --sql \"$(cat query.sql)\" \\\n  --compute-pool \"$COMPUTE_POOL\" \\\n  --database \"$CLUSTER_ID\" \\\n  --environment \"$ENV_ID\" \\\n  --wait\n\n# Verify running\nconfluent flink statement describe hourly-signals \\\n  --cloud aws --region eu-central-1 --output json | jq '.status'\n\n# Consume results\nconfluent kafka topic consume hourly-vehicle-signals \\\n  --cluster \"$CLUSTER_ID\" --from-beginning --value-format jsonschema 2>/dev/null | grep -v '^%' | head -5\n```\n\n---\n\n`★ Insight ─────────────────────────────────────`\n\n**TVF syntax required on CC**: `TUMBLE(TABLE t, DESCRIPTOR(col), INTERVAL)` — NOT `TUMBLE(col, INTERVAL)`. CC enforces table-valued function form. Window boundaries (`window_start`, `window_end`) auto-materialize in output; no `CURRENT_WATERMARK()` needed.\n\n**Format trap**: `value.format = 'json-registry'` is CC-only. Plain `'json'` fails parse. Always SR-backed on CC.\n\n**State retention**: Default 24h, tunable via `--property sql.state-ttl=ms`. Needed for windowed aggregates across statement restarts.\n\n`─────────────────────────────────────────────────`",
+      "Using **cc-flink-sql** skill to validate CC Flink patterns:\n\nInvoking skill to enforce CC Flink dialect rules...\n\n---\n\n## Append-only sink (simplest)\n\n```sql\nCREATE TABLE orders_json_output (\n  order_id STRING,\n  total DECIMAL(10,2)\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'orders-output',\n  'properties.bootstrap.servers' = 'localhost:9092',\n  'value.format' = 'json-registry',\n  'value.json-registry.id-encoding' = 'header',\n  'changelog.mode' = 'append'\n);\n```\n\n## Upsert sink (if order_id replaces)\n\n```sql\nCREATE TABLE orders_json_output (\n  order_id STRING NOT NULL,\n  total DECIMAL(10,2),\n  PRIMARY KEY (order_id) NOT ENFORCED\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'orders-output',\n  'properties.bootstrap.servers' = 'localhost:9092',\n  'value.format' = 'json-registry',\n  'value.json-registry.id-encoding' = 'header',\n  'changelog.mode' = 'upsert'\n);\n```\n\n---\n\n`★ Insight ─────────────────────────────────────`\n- **Trap #20**: CC requires `json-registry` (SR-backed), NOT plain `json`. Both forms fail on CC; plain `json` → \"Unsupported format\" error\n- **`id-encoding=header`**: Embeds schema ID in Kafka header instead of wire-format prefix (5 magic bytes). Cleaner JSON output for downstream consumers\n- **`changelog.mode`**: Append = insert-only; upsert = deduped by PRIMARY KEY. Append sinks reject update/delete rows; upsert sinks emit them\n`─────────────────────────────────────────────────`\n\n**Before CREATE**: Run `EXPLAIN` in `confluent flink shell` to catch parse/type errors free:\n```sql\nEXPLAIN PLAN FOR INSERT INTO orders_json_output SELECT order_id, total FROM source;\n```",
+      "**CC Flink requires CTE AFTER INSERT INTO** — not before. Trap #4.\n\n```sql\n-- ✅ CORRECT for Confluent Cloud\nINSERT INTO output_topic\nWITH filtered_signals AS (\n  SELECT signal_id, vehicle_id, temperature\n  FROM input_signals\n  WHERE temperature > 0 AND temperature < 150\n)\nSELECT signal_id, vehicle_id, temperature\nFROM filtered_signals;\n```\n\n**NOT** (fails on CC):\n```sql\n-- ❌ WRONG\nWITH filtered_signals AS (...)\nINSERT INTO output_topic\nSELECT ...;\n```\n\n## Before running\n\n1. **EXPLAIN** first (free, catches syntax errors):\n   ```sql\n   EXPLAIN PLAN FOR INSERT INTO output_topic\n   WITH filtered_signals AS (\n     SELECT signal_id, vehicle_id, temperature\n     FROM input_signals\n     WHERE temperature > 0 AND temperature < 150\n   )\n   SELECT signal_id, vehicle_id, temperature\n   FROM filtered_signals;\n   ```\n\n2. Save repro to `repro/filter-signals.sql`\n\n3. Create statement:\n   ```bash\n   confluent flink statement create filter-signals \\\n     --sql \"$(cat repro/filter-signals.sql)\" \\\n     --compute-pool <pool-id> --database <cluster-id> --environment <env-id> --wait\n   ```\n\n4. Verify output:\n   ```bash\n   confluent kafka topic consume output_topic --cluster <id> --from-beginning \\\n     --value-format jsonschema 2>/dev/null | grep -v '^%' | head -5\n   ```\n\n## Key notes\n\n- CTE names not persisted (internal to statement only)\n- CTE in multi-insert must come inside statement (see `BEGIN STATEMENT SET` pattern in sql-patterns-cc.md)\n- Never alias `$rowtime` in CTE — silently strips time-attribute property (Trap #8)",
+      "**CC Flink SQL — JSON Array Explosion**\n\nPattern: CAST VARBINARY → STRING, JSON_QUERY extract array, CROSS JOIN UNNEST (not LATERAL TABLE).\n\n```sql\nSELECT\n  event_id,\n  item_str\nFROM raw_events\nCROSS JOIN UNNEST(\n  CAST(JSON_QUERY(CAST(val AS STRING), 'lax $.items[*]'\n       RETURNING ARRAY<STRING>) AS ARRAY<STRING>)\n) AS T(item_str);\n```\n\n**For structured items (extract fields):**\n\n```sql\nSELECT\n  event_id,\n  item.product_id,\n  item.quantity\nFROM raw_events\nCROSS JOIN UNNEST(\n  CAST(JSON_QUERY(CAST(val AS STRING), 'lax $.items[*]'\n       RETURNING ARRAY<STRING>) AS ARRAY<STRING>)\n) AS T(item_str)\nCROSS JOIN LATERAL (\n  SELECT\n    JSON_VALUE(item_str, '$.product_id') AS product_id,\n    CAST(JSON_VALUE(item_str, '$.quantity') AS INT) AS quantity\n) item;\n```\n\n**Or flatten inline (simpler):**\n\n```sql\nSELECT\n  event_id,\n  JSON_VALUE(item_str, '$.product_id') AS product_id,\n  CAST(JSON_VALUE(item_str, '$.quantity') AS INT) AS quantity\nFROM raw_events\nCROSS JOIN UNNEST(\n  CAST(JSON_QUERY(CAST(val AS STRING), 'lax $.items[*]'\n       RETURNING ARRAY<STRING>) AS ARRAY<STRING>)\n) AS T(item_str);\n```\n\n**Gotchas:**\n- `LATERAL TABLE(UNNEST(...))` = parse error on CC — use CROSS JOIN only\n- Must CAST VARBINARY to STRING first\n- JSON_QUERY with 'lax' allows missing path\n- Array element type defaults STRING; adapt if items are objects with deeper nesting\n\n**Test with EXPLAIN before statement create:**\n```sql\nEXPLAIN SELECT * FROM raw_events CROSS JOIN UNNEST(...);\n```",
+      "## Canonical Pattern: External Tables + KEY_SEARCH_AGG\n\nCC has no `PROCTIME()`. For per-row Postgres lookups, use External Table + `KEY_SEARCH_AGG`:\n\n```sql\n-- Step 1: CONNECTION (endpoint + credentials, TF-injected)\nCREATE CONNECTION postgres_conn\n  WITH (\n    'type' = 'confluent_jdbc',\n    'endpoint' = 'jdbc:postgresql://host:5432/db',\n    'username' = '${POSTGRES_USER}',\n    'password' = '${POSTGRES_PASS}',\n    'environment' = '${ENV_ID}'\n  );\n\n-- Step 2: EXTERNAL TABLE (reads from Postgres)\nCREATE TABLE customers (\n  customer_id STRING,\n  name STRING,\n  segment STRING,\n  lifetime_value DECIMAL(10, 2)\n) WITH (\n  'connector' = 'confluent-jdbc',\n  'confluent-jdbc.connection' = 'postgres_conn',\n  'confluent-jdbc.table-name' = 'customers'\n);\n\n-- Step 3: JOIN orders → customers via KEY_SEARCH_AGG\nINSERT INTO orders_enriched\nSELECT\n  o.order_id,\n  o.order_time,\n  o.amount,\n  c.name,\n  c.segment,\n  c.lifetime_value\nFROM orders o,\nLATERAL TABLE(KEY_SEARCH_AGG(\n  customers,\n  DESCRIPTOR(customer_id),\n  o.customer_id\n))\nCROSS JOIN UNNEST(search_results) AS c(\n  customer_id,\n  name,\n  segment,\n  lifetime_value\n);\n```\n\n**Naming trap:** Connection type = underscore (`confluent_jdbc`), table connector = hyphen (`confluent-jdbc`).\n\n### Tuning (optional 4th arg)\n```sql\nLATERAL TABLE(KEY_SEARCH_AGG(\n  customers,\n  DESCRIPTOR(customer_id),\n  o.customer_id,\n  MAP[\n    'async_enabled', 'true',\n    'client_timeout', '30',\n    'max_parallelism', '10',\n    'retry_count', '3'\n  ]\n))\n```\n\n### Constraints\n- Single-column key only\n- Output always array → must follow with UNNEST\n- No cache/TTL knobs in API\n\n`★ Insight ─────────────────────────────────────`\n**KEY_SEARCH_AGG vs PROCTIME join:** CC removed `PROCTIME()`, so regular joins emit updates (breaks append-only sinks). `KEY_SEARCH_AGG` batches lookups per row + emits once per match → plays with append sinks. Trade: per-row latency 30-300ms vs updates. For low-cardinality dims, upsert-kafka ref table cheaper.\n\n**Secrets flow:** Never hardcode Postgres creds. Terraform provider injects via `CREATE CONNECTION` with env var refs (`${POSTGRES_PASS}`). Statement doesn't see raw secret.\n`─────────────────────────────────────────────────`\n\n**Verify before CREATE:** Run in `flink shell`:\n```sql\nEXPLAIN SELECT o.*, c.name FROM orders o CROSS JOIN UNNEST(...);\n```\nCatch syntax/type errors free before `--wait` consumes CFUs.",
+      "Here's CC Flink SQL with CTE → tumbling window:\n\n```sql\nINSERT INTO sensor_aggregates\nWITH sensor_prep AS (\n  SELECT\n    sensor_id,\n    location,\n    temperature_c,\n    humidity_pct,\n    `$rowtime` AS event_time\n  FROM sensor_data\n  WHERE temperature_c >= -50 AND temperature_c <= 150\n)\nSELECT\n  window_start,\n  window_end,\n  sensor_id,\n  location,\n  COUNT(*) AS reading_count,\n  AVG(temperature_c) AS avg_temp,\n  MIN(temperature_c) AS min_temp,\n  MAX(temperature_c) AS max_temp,\n  AVG(humidity_pct) AS avg_humidity\nFROM TABLE(\n  TUMBLE(TABLE sensor_prep, DESCRIPTOR(event_time), INTERVAL '5' MINUTE)\n)\nGROUP BY window_start, window_end, sensor_id, location;\n```\n\n**Key CC patterns:**\n\n- **CTE placement**: `INSERT INTO ... WITH cte AS` (CTE after INSERT, not before). Trap #4.\n- **Window function**: `TUMBLE(TABLE t, DESCRIPTOR(col), INTERVAL)` — TVF syntax required, not `GROUP BY TUMBLE(...)`. Trap #18.\n- **System column**: Reference as `$rowtime` directly in CTE. Assign to alias (`event_time`) to preserve time-attribute. Never alias `$rowtime` itself. Trap #8.\n- **Reserved words**: Wrapped `$rowtime` in backticks since `$` prefix + system column need escaping.\n\n---\n\n★ Insight ─────────────────────────────────────\n**Why assign `$rowtime` to a new column:** The `$rowtime` system column carries metadata (time-attribute) that downstream operators need for watermark propagation. Aliasing `$rowtime AS event_time` preserves that metadata; using bare `$rowtime` in GROUP BY loses it.\n\n**Why CTE comes after INSERT:** CC Flink rewrites INSERT logic; CTEs must bind within that scope. OSS Flink allows CTEs before INSERT; CC enforces the reverse to prevent ambiguous statement parsing.\n\n**Why TUMBLE is TVF:** Table-valued functions (`TUMBLE(TABLE input, ...)`) return rowtime-aware tables with `window_start`/`window_end` columns. OSS syntax (`GROUP BY TUMBLE(col, INTERVAL)`) is syntactic sugar CC doesn't support.\n─────────────────────────────────────────────────\n\n**To verify before deploy:**\n```bash\nconfluent flink shell --compute-pool <pool-id> --environment <env-id>\nEXPLAIN SELECT ... FROM TABLE(TUMBLE(...)) ...;\n```",
+      "**Can't CREATE CATALOG on CC Flink.**\n\nTrap #1 (HIGH severity): CC doesn't support `CREATE CATALOG`. Hierarchy is fixed:\n\n| Level | Maps to | Can you create? |\n|-------|---------|---|\n| **Catalog** | CC environment | ❌ No — catalog = env ID, immutable |\n| **Database** | Kafka cluster | ⚠️ Limited |\n| **Table** | Topic + schema | ✅ Yes — from topic or DDL |\n\n### Organize tables → use databases + naming convention\n\n```sql\n-- Step 1: Switch to database (cluster)\nUSE `default`.`lkc-xxxxx`;  -- fully qualified\n\n-- Step 2: Create tables (auto-mapped from topics or manual DDL)\nCREATE TABLE events (\n  id STRING,\n  ts TIMESTAMP(3),\n  WATERMARK FOR ts AS ts - INTERVAL '5' SECOND\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'my-events-topic'\n);\n```\n\n### Query structure\n```sql\n-- Fully qualified: [catalog].[database].[table]\nSELECT * FROM `ksql-cluster`.`lkc-abc123`.my_table;\n```\n\nCatalog value = your CC org's environment ID. Use `confluent environment list` to find. Database = Kafka cluster ID (`confluent kafka cluster list`). Tables = topics.\n\n**Result:** Tables organized by cluster + schema registry scope. No separate \"catalog creation\" step.",
+      "**CRITICAL: Savepoint-based upgrades NOT available on Confluent Cloud Flink.**\n\nSavepoints are internal-only on CC. Cannot export/restore them between statements. State loss on statement deletion.\n\n## What you CAN do:\n\n### 1. **Stateless queries** (filters, simple projections)\nUse carry-over offsets — swap statements without reprocessing:\n\n```bash\n# Step 1: Create v2 with carry-over reference\nconfluent flink statement create stmt-v2 \\\n  --sql \"$(cat new-filter.sql)\" \\\n  --compute-pool POOL --database CLUSTER --environment ENV \\\n  --property \"sql.tables.initial-offset-from=stmt-v1\"\n\n# Step 2: STOP v1 (NOT delete)\nconfluent flink statement stop stmt-v1 --cloud aws --region eu-central-1\n\n# Step 3: Wait for v2 RUNNING (~25-30s)\n```\n\nSee `cli-reference.md` for full carry-over recipe + timing.\n\n### 2. **Stateful queries** (windows, aggregates, joins)\nOptions:\n- Accept state loss on deploy (delete old, create new)\n- Use `prevent_destroy` in Terraform to gate accidental deletion\n- Pre-aggregate to Kafka, restart from topic offset\n\n## Stateless vs Stateful check:\n\n```sql\n-- STATELESS (carry-over safe)\nSELECT * FROM input WHERE metric > 100\n\n-- STATEFUL (state loss on delete)\nSELECT window_start, COUNT(*) FROM TABLE(TUMBLE(...)) GROUP BY ...\n```\n\nReference: `references/dialect-traps.md` traps #22–23 (savepoints critical gap).",
+      "**Use format-first naming** (CC convention):\n\n| Input Type | Format Value |\n|---|---|\n| Debezium + Avro | `'value.format' = 'avro-debezium-registry'` |\n| Debezium + JSON Schema | `'value.format' = 'json-debezium-registry'` |\n| Debezium + Protobuf | `'value.format' = 'proto-debezium-registry'` |\n\n**Naming trap:** OSS uses `'debezium-json'` → CC uses `'json-debezium-registry'` (format-first, not debezium-first).\n\n**Required:** Add `'changelog.mode' = 'retract'` or `'changelog.mode' = 'upsert'` — Debezium emits change records (insert/update/delete), not append-only.\n\n```sql\nCREATE TABLE cdc_input (\n  id STRING,\n  name STRING,\n  PRIMARY KEY (id) NOT ENFORCED\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'my.changes',\n  'value.format' = 'avro-debezium-registry',\n  'changelog.mode' = 'upsert'\n);\n```",
+      "Command pattern (from cc-flink-sql reference):\n\n```bash\nconfluent flink statement create <name> \\\n  --sql \"$(cat filter.sql)\" \\\n  --compute-pool lfcp-abc123 \\\n  --database <cluster-id> \\\n  --environment env-xyz789 \\\n  --wait\n```\n\n**Key rules:**\n- `--sql \"$(cat file.sql)\"` — file reading required; `--sql-file` flag doesn't exist\n- `--environment` required for `create` (not `--cloud`/`--region`)\n- `--database` = Kafka cluster ID (you need to specify)\n- `--wait` optional; waits ~5-60s for statement to reach RUNNING state\n\nReplace `<name>` with statement name (e.g., `my-filter-v1`) and `<cluster-id>` with your Kafka cluster ID.",
+      "```bash\nconfluent flink statement list --cloud aws --region eu-central-1\n```\n\nTo filter only running statements:\n\n```bash\nconfluent flink statement list --cloud aws --region eu-central-1 --output json \\\n  | jq '.[] | select(.status == \"RUNNING\")'\n```\n\n**Note:** Flag order matters. `list` requires `--cloud`/`--region` (NOT `--environment`). See cli-reference.md, flag schema table, for full command variations.",
+      "```bash\nconfluent flink statement describe my-filter-v2 --cloud aws --region us-east-1\n```\n\n**Key points (from cli-reference.md):**\n- `statement describe` uses `--cloud`/`--region` (NOT `--environment`)\n- Outputs statement status, details, CFU usage\n- Add `--output json` for parsing\n\nCommon follow-ups:\n```bash\n# See all statements in region\nconfluent flink statement list --cloud aws --region us-east-1\n\n# If stuck in PENDING > 60s, check exceptions\nconfluent flink statement exception list my-filter-v2 --cloud aws --region us-east-1\n```",
+      "Using cc-flink-sql skill to establish CC Flink boundaries.\n\n---\n\n**Stop.** Confluent Cloud Flink is **SQL-only**. DataStream API (Java/Scala) not supported.\n\n## What CC Flink offers\n\n- **SQL statements only** — no DataStream, Table API, or Scala\n- No custom Java operators, UDFs via `CREATE FUNCTION` only (scalar + table functions, not aggregate)\n- Deployable via `confluent flink statement create --sql \"...\"` CLI\n\n## Your use case: filter by vehicle_id\n\n**In CC Flink SQL (correct approach):**\n\n```sql\n-- Verify syntax first (free, no CFUs)\nEXPLAIN SELECT * FROM kafka_source WHERE vehicle_id = 'vehicle-123';\n\n-- Deploy statement\nconfluent flink statement create filter-by-vehicle \\\n  --sql \"$(cat - <<'EOF'\nCREATE TABLE filtered_output AS\nSELECT * FROM input_topic\nWHERE vehicle_id = 'vehicle-123';\nEOF\n)\" \\\n  --compute-pool $POOL_ID \\\n  --database $CLUSTER_ID \\\n  --environment $ENV_ID \\\n  --wait\n```\n\n**If you need Java/DataStream:**\n\n- **Apache Flink (self-managed)** — supports full DataStream API\n- **Flink on Kubernetes** — full feature parity\n- CC Flink = managed SQL execution layer on top of Apache Flink, not expose raw DataStream\n\n## Reference\n\n- Supported on CC: [sql-patterns-cc.md](references/sql-patterns-cc.md) — window joins, dedup, pattern matching\n- Dialect traps table: [dialect-traps.md](references/dialect-traps.md) — trap #24: DataStream/Table API unsupported\n- CC Flink docs: https://docs.confluent.io/cloud/current/flink/\n\n**Clarify:** What's your actual filtering logic? Window-based? Temporal join? Pattern detection? SQL can express it.",
+      "**Cannot set checkpointing interval on CC Flink.** Confluent Cloud manages checkpointing; you can't configure it via `SET` statements.\n\n**What you might try (that won't work):**\n```sql\nSET 'execution.checkpointing.interval' = '5000';  -- ❌ REJECTED\n```\n\n**Why:** CC Flink handles fault tolerance internally. Checkpoint tuning (interval, mode, retention) is controlled by Confluent and not exposed to users.\n\n**What you can do:**\n\n1. **Pass checkpoint settings via CLI flag** (limited):\n   ```bash\n   confluent flink statement create my-stmt \\\n     --sql \"$(cat query.sql)\" \\\n     --property \"execution.checkpointing.mode=EXACTLY_ONCE\" \\\n     --compute-pool $POOL --database $CLUSTER --environment $ENV\n   ```\n   Supported properties (CC-limited set):\n   - `execution.checkpointing.mode` (`EXACTLY_ONCE` | `AT_LEAST_ONCE`)\n   - `sql.state-ttl` (state cleanup TTL in ms)\n   - Other props may fail silently\n\n2. **Monitor checkpoint health** (observe-only):\n   ```bash\n   confluent flink statement describe my-stmt --cloud aws --region eu-central-1\n   # Check \"Status Detail\" for checkpoint lag / failures\n   ```\n\n3. **If checkpoint lag is unacceptable:** File support ticket with Confluent (they may tune pool settings).\n\n**Takeaway:** Treat CC Flink checkpointing as a black box. Design queries assuming `EXACTLY_ONCE` semantics + CC-managed state TTL defaults.",
+      "Using **cc-flink-sql** for CC Flink validation.\n\nStandard CC pattern (schema registry auto-mapping):\n\n```sql\nCREATE TABLE vehicle_signals (\n    signal_id        STRING,\n    vehicle_id       STRING,\n    `timestamp`      BIGINT,\n    signal_type      STRING,\n    `value`          DOUBLE,\n    `$rowtime` TIMESTAMP(3) METADATA FROM 'timestamp'\n) WITH (\n    'connector'      = 'kafka',\n    'topic'          = 'vehicle-signals',\n    'properties.bootstrap.servers' = 'pkc-XXX.region.provider.confluent.cloud:9092',\n    'properties.security.protocol' = 'SASL_SSL',\n    'properties.sasl.mechanism'    = 'PLAIN',\n    'properties.sasl.jaas.config'  = 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"<KEY>\" password=\"<SECRET>\";',\n    'value.format'   = 'avro-registry',     -- or json-registry, proto-registry\n    'value.avro-registry.id-encoding' = 'confluent'\n);\n```\n\n**Key CC rules:**\n\n- **No bootstrap in CREATE TABLE** — pass via TF/env vars; never hardcode secrets [dialect trap #4]\n- **Format must be registry-backed** — `avro-registry`, `json-registry`, `proto-registry`, or `raw` only. NOT `'json'` or `'avro'` [dialect trap #20]\n- **Backquote reserved words** — `timestamp`, `value` must have backticks everywhere [reserved-words.md]\n- **Kafka properties as-is** — connector parameter presence OK on CC (unlike dialect trap #3 phrasing)\n\n**Verify syntax before CREATE:**\n```bash\nconfluent flink shell --compute-pool <pool-id> --environment <env-id>\nEXPLAIN SELECT * FROM vehicle_signals;\n```\n\n**Via Terraform** (canonical for secrets):\n```hcl\nresource \"confluent_flink_statement\" \"vehicle_signals_table\" {\n  sql = <<-SQL\n    CREATE TABLE vehicle_signals (...)\n    WITH (\n      'connector' = 'kafka',\n      'topic' = 'vehicle-signals',\n      'properties.bootstrap.servers' = '${confluent_kafka_cluster.main.bootstrap_servers}',\n      ...\n      'properties.sasl.jaas.config' = '...' -- injected from var\n    );\n  SQL\n}\n```\n\nWant CDC (Debezium), temporal join, or external table pattern instead?",
+      "**Trap alert:** `CREATE TEMPORARY VIEW` not supported on CC Flink. Use `WITH` (CTE) instead.\n\nTwo patterns:\n\n## Pattern 1: CTE within statement (single-use)\n\n```sql\nWITH hot_sensors AS (\n  SELECT * FROM sensor_data WHERE temperature > 100\n)\nSELECT * FROM hot_sensors;\n```\n\nReusable only within that statement.\n\n## Pattern 2: Materialized table (persistent, cross-statement reuse)\n\n```sql\nCREATE TABLE hot_sensors_view AS\nSELECT * FROM sensor_data WHERE temperature > 100;\n\n-- Later, reference it:\nSELECT * FROM hot_sensors_view;\n```\n\nCreates table from query; stores filtered results. Updates on each run if input topic has new records (append mode). Monitor CFU cost — running repeatedly on large topics is expensive.\n\n## Pattern 3: Persistent view via manual DDL + topic mapping\n\n```sql\nCREATE TABLE hot_sensors (\n  sensor_id STRING,\n  temperature DECIMAL(5,2),\n  recorded_at TIMESTAMP(3),\n  WATERMARK FOR recorded_at AS recorded_at - INTERVAL '5' SECOND\n) WITH (\n  'connector' = 'kafka',\n  'topic' = 'hot-sensors-topic',\n  'properties.bootstrap.servers' = '...',\n  'value.format' = 'json-registry'\n);\n\n-- Source table still exists; this DDL maps to a Kafka topic\n-- Downstream statements reference hot_sensors directly\n```\n\nMaps existing Kafka topic to table schema. Reusable across statements.\n\n**Which to pick:**\n- **CTE**: temporary filter within one query\n- **Materialized table**: small dataset, frequent reuse, accept CFU cost\n- **DDL map**: data already in Kafka topic, zero recompute cost\n\nEXPLAIN before CREATE TABLE to validate:\n\n```sql\nEXPLAIN CREATE TABLE hot_sensors_view AS SELECT * FROM sensor_data WHERE temperature > 100;\n```",
+      "CC Flink uses `MODIFY` not `ADD` for watermarks. Trap #9.\n\n```sql\nALTER TABLE my_table\n  MODIFY WATERMARK FOR column_name AS column_name - INTERVAL '5' SECOND;\n```\n\nKey points:\n- `MODIFY WATERMARK` — not `ADD WATERMARK` (OSS trap)\n- Column must be TIMESTAMP / TIMESTAMP_LTZ\n- Watermark expression defines event-time drift tolerance\n- Must already have valid column to watermark on\n\nExample — shift tolerance from 10s to 30s:\n```sql\nALTER TABLE sensor_readings\n  MODIFY WATERMARK FOR `$rowtime` AS `$rowtime` - INTERVAL '30' SECOND;\n```\n\nTest with `EXPLAIN` first:\n```sql\nEXPLAIN ALTER TABLE sensor_readings MODIFY WATERMARK FOR `$rowtime` AS `$rowtime` - INTERVAL '30' SECOND;\n```\n\nThen validate via `DESCRIBE`:\n```sql\nDESCRIBE sensor_readings;\n```\n\nSee references/dialect-traps.md trap #9 + sql-patterns-cc.md window section for full pattern examples.",
+      "**Trap #13**: Direct `CAST('2024-06-15T10:30:00Z' AS TIMESTAMP)` fails on CC Flink SQL. ISO-8601 strings need preprocessing.\n\n✅ **Fix:**\n\n```sql\nTO_TIMESTAMP(REPLACE('2024-06-15T10:30:00Z', 'Z', ''))\n```\n\nOr use explicit format if timezone varies:\n\n```sql\nTO_TIMESTAMP('2024-06-15T10:30:00Z', 'yyyy-MM-dd''T''HH:mm:ss''Z''', 'UTC')\n```\n\n**Why:** CC Flink's CAST doesn't handle 'Z' timezone designator. `TO_TIMESTAMP()` handles format strings and timezone conversion.\n\n**Verify in flink shell first:**\n```bash\nconfluent flink shell --compute-pool <id> --environment <env>\nSELECT TO_TIMESTAMP(REPLACE('2024-06-15T10:30:00Z', 'Z', ''));\n```\n\nOutput should be `2024-06-15 10:30:00.000`.\n\nReference: `dialect-traps.md` trap #13 in cc-flink-sql skill.",
+      "State TTL set via `--property` flag, NOT `SET` statement.\n\n**Wrong:**\n```sql\nSET 'sql.state-ttl' = '3600000';\n```\n\n**Right:**\n```bash\nconfluent flink statement create my-stmt \\\n  --sql \"$(cat query.sql)\" \\\n  --compute-pool <pool-id> \\\n  --database <cluster-id> \\\n  --environment <env-id> \\\n  --property \"sql.state-ttl=3600000\"\n```\n\nValue in milliseconds. Multiple properties comma-separated in single `--property` flag:\n```bash\n--property \"sql.state-ttl=3600000,sql.checkpoint.interval=60000\"\n```\n\nCC manages TTL server-side; `SET` statement rejected. Trap #28 in dialect-traps.md.",
+      "Pattern: 3+ consecutive value increases + final spike (>200).\n\nCC MATCH_RECOGNIZE constraint: no PREV/NEXT offsets, use LAG() in DEFINE to compare consecutive rows. Greedy quantifier `N{3,}` is OK if not the last pattern element.\n\n```sql\n-- Step 0: EXPLAIN (free validation before --wait)\nEXPLAIN SELECT * FROM sensor_readings\nMATCH_RECOGNIZE (\n  PARTITION BY sensor_id\n  ORDER BY reading_time\n  MEASURES\n    FIRST(N.reading_time) AS spike_start,\n    LAST(C.reading_time) AS spike_end,\n    COUNT(N.value) AS consecutive_increases,\n    LAST(C.value) AS peak_value\n  ONE ROW PER MATCH\n  AFTER MATCH SKIP PAST LAST ROW\n  PATTERN (N{3,} C)\n  DEFINE\n    N AS N.value > LAG(N.value),\n    C AS C.value > 200\n);\n```\n\n**Pattern breakdown:**\n- `N{3,}` — 3+ consecutive rows where value strictly increases\n  - `LAG(N.value)` compares current N row to previous N row\n- `C` — final row with value > 200\n- `ONE ROW PER MATCH` — emit one output row per spike detected\n- `AFTER MATCH SKIP PAST LAST ROW` — move past spike, don't re-test C row\n\n**Deploy:**\n```bash\nconfluent flink statement create sensor-spike-detector \\\n  --sql \"$(cat spike-detector.sql)\" \\\n  --compute-pool <pool-id> \\\n  --database <cluster-id> \\\n  --environment <env-id> \\\n  --wait\n```\n\n**Consume output:**\n```bash\nconfluent kafka topic consume sensor_spikes \\\n  --cluster <cluster-id> \\\n  --from-beginning --value-format jsonschema 2>/dev/null | grep -v '^%'\n```\n\n★ Insight ─────────────────────────────────────\n**LAG() in DEFINE**: CC MATCH_RECOGNIZE uses LAG/LEAD window functions inside pattern conditions—no physical offsets needed. `LAG(N.value)` accesses the previous N-partition row, enabling increase detection without greedy fallback loops.\n\n**Pattern sequencing**: Placing `N{3,}` before `C` is critical. If `C` were before `N{3,}`, the greedy quantifier would match all remaining rows, violating CC's \"no greedy-as-last-element\" rule.\n─────────────────────────────────────────────────"
+    ]
+  }
+}
